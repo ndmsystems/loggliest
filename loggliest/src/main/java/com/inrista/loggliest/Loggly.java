@@ -591,13 +591,8 @@ public class Loggly {
 
             // Check if size of logs on disk exceeds the limit, drop
             // oldest messages in this case
-            if(totalSize > mMaxSizeOnDisk) {
-                int numFiles = logFiles.length;
-                if(numFiles <= 1)
-                    return;
-                
+            if(totalSize > mMaxSizeOnDisk)
                 oldestLogFile().delete();
-            }
             
             // Create a new log file if necessary
             if(mRecentLogFile == null || mRecentLogFile.length() > LOGGLY_MAX_POST_SIZE)
