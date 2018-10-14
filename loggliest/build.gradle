@@ -1,8 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
-group='com.github.ndmsystems'
-
 ext {
     PUBLISH_GROUP_ID = 'com.inrista.loggliest'
     PUBLISH_ARTIFACT_ID = 'loggliest'
@@ -10,8 +8,8 @@ ext {
 }
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion '22'
+    compileSdkVersion 25
+    buildToolsVersion '25'
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 22
