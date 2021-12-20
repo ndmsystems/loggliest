@@ -13,6 +13,10 @@ android {
         versionCode 2
         versionName PUBLISH_VERSION
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
