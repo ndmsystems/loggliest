@@ -132,7 +132,7 @@ public class Loggly {
      
     private static IBulkLog mBulkLogService;
     private static Thread mThread = null;
-    private static final LinkedBlockingQueue<JSONObject> mLogQueue = new LinkedBlockingQueue<JSONObject>();
+    private static final LinkedBlockingQueue<JSONObject> mLogQueue = new LinkedBlockingQueue<>();
     private static long mLastUpload = 0;
     private static long mLastLog = 0;
     private static int mLogCounter = 0;
@@ -156,7 +156,7 @@ public class Loggly {
         private int uploadIntervalLogCount = UPLOAD_INTERVAL_LOG_COUNT_DEFAULT;
         private int idleSecs = IDLE_SECS_DEFAULT;
         private boolean appendDefaultInfo = APPEND_DEFAULT_INFO_DEFAULT;
-        private final HashMap<String, String> stickyInfo = new HashMap<String, String>();
+        private final HashMap<String, String> stickyInfo = new HashMap<>();
         private int maxSizeOnDisk = MAX_SIZE_ON_DISK_DEFAULT;
         
         private Builder(Context context, String token) {
@@ -348,46 +348,43 @@ public class Loggly {
         if(mThread != null && mThread.isAlive())
             return;
         
-        mThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-                mThread.setName(THREAD_NAME);
-                
-                List<JSONObject> logBatch = new ArrayList<JSONObject>();
-                while(true) {
-                    try {
-                        JSONObject msg = mLogQueue.poll(10, TimeUnit.SECONDS);
-                        if(msg != null) {
-                            logBatch.add(msg);
-                            while ((msg = mLogQueue.poll()) != null)
-                                logBatch.add(msg);
-                        }
+        mThread = new Thread(() -> {
+            Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+            mThread.setName(THREAD_NAME);
 
-                        long now = SystemClock.elapsedRealtime() / 1000;
-                        
-                        if(!logBatch.isEmpty()) {
-                            mLastLog = now;
-                            mLogCounter += logBatch.size();
-                            logToFile(logBatch);
-                            logBatch.clear();
-                        }
-                        
-                        if((now - mLastUpload) >= mUploadIntervalSecs 
-                                || mLogCounter >= mUploadIntervalLogCount) {
-                            postLogs();
-                        }
-                        
-                        if(((now - mLastLog) >= mIdleSecs) && mIdleSecs > 0 && mLastLog > 0) {
-                            mThread.interrupt();
-                        }
-                        
-                    } catch (InterruptedException e) {
-                        mLogQueue.drainTo(logBatch);
-                        logToFile(logBatch);
-                        postLogs();
-                        return;
+            List<JSONObject> logBatch = new ArrayList<>();
+            while(true) {
+                try {
+                    JSONObject msg = mLogQueue.poll(10, TimeUnit.SECONDS);
+                    if(msg != null) {
+                        logBatch.add(msg);
+                        while ((msg = mLogQueue.poll()) != null)
+                            logBatch.add(msg);
                     }
+
+                    long now = SystemClock.elapsedRealtime() / 1000;
+
+                    if(!logBatch.isEmpty()) {
+                        mLastLog = now;
+                        mLogCounter += logBatch.size();
+                        logToFile(logBatch);
+                        logBatch.clear();
+                    }
+
+                    if((now - mLastUpload) >= mUploadIntervalSecs
+                            || mLogCounter >= mUploadIntervalLogCount) {
+                        postLogs();
+                    }
+
+                    if(((now - mLastLog) >= mIdleSecs) && mIdleSecs > 0 && mLastLog > 0) {
+                        mThread.interrupt();
+                    }
+
+                } catch (InterruptedException e) {
+                    mLogQueue.drainTo(logBatch);
+                    logToFile(logBatch);
+                    postLogs();
+                    return;
                 }
             }
         });
@@ -572,8 +569,7 @@ public class Loggly {
     
     private static File createLogFile() {
         File dir = mContext.getDir(LOG_FOLDER, Context.MODE_PRIVATE);
-        File logFile = new File(dir, Long.toString(System.currentTimeMillis()));
-        return logFile;
+        return new File(dir, Long.toString(System.currentTimeMillis()));
     }
     
     private static void logToFile(List<JSONObject> msgBatch) {
