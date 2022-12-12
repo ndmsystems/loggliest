@@ -38,7 +38,7 @@ android.libraryVariants.all { variant ->
         def task = project.tasks.create "jar${name.capitalize()}", Jar
         task.dependsOn variant.javaCompile
         task.from variant.javaCompile.destinationDir
-        artifacts.add('archives', task);
+        artifacts.add('archives', task)
     }
 }
 
@@ -69,11 +69,11 @@ uploadArchives {
                 if (project.configurations.optional.allDependencies.findAll { dep ->
                     xmlDep.groupId.text() == dep.group && xmlDep.artifactId.text() == dep.name
                 }) {
-                    def xmlOptional = xmlDep.optional[0];
+                    def xmlOptional = xmlDep.optional[0]
                     if (!xmlOptional) {
                         xmlOptional = xmlDep.appendNode('optional')
                     }
-                    xmlOptional.value = 'true';
+                    xmlOptional.value = 'true'
                 }
             }
         }

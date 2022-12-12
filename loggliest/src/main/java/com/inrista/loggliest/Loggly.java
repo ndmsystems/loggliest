@@ -132,7 +132,7 @@ public class Loggly {
      
     private static IBulkLog mBulkLogService;
     private static Thread mThread = null;
-    private static LinkedBlockingQueue<JSONObject> mLogQueue = new LinkedBlockingQueue<JSONObject>();
+    private static final LinkedBlockingQueue<JSONObject> mLogQueue = new LinkedBlockingQueue<JSONObject>();
     private static long mLastUpload = 0;
     private static long mLastLog = 0;
     private static int mLogCounter = 0;
@@ -156,7 +156,7 @@ public class Loggly {
         private int uploadIntervalLogCount = UPLOAD_INTERVAL_LOG_COUNT_DEFAULT;
         private int idleSecs = IDLE_SECS_DEFAULT;
         private boolean appendDefaultInfo = APPEND_DEFAULT_INFO_DEFAULT;
-        private HashMap<String, String> stickyInfo = new HashMap<String, String>();
+        private final HashMap<String, String> stickyInfo = new HashMap<String, String>();
         private int maxSizeOnDisk = MAX_SIZE_ON_DISK_DEFAULT;
         
         private Builder(Context context, String token) {
