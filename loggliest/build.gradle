@@ -23,7 +23,7 @@ dependencies {
     implementation 'com.squareup.retrofit:retrofit:1.9.0'
 }
 
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 configurations {
     optional
@@ -57,30 +57,6 @@ task androidSourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
 }
 
-uploadArchives {
-    repositories.mavenDeployer {
-        pom.groupId = project.PUBLISH_GROUP_ID
-        pom.artifactId = project.PUBLISH_ARTIFACT_ID
-        pom.version = project.PUBLISH_VERSION
-
-        pom.withXml {
-            asNode().dependencies.dependency.findAll { xmlDep ->
-                // mark optional dependencies
-                if (project.configurations.optional.allDependencies.findAll { dep ->
-                    xmlDep.groupId.text() == dep.group && xmlDep.artifactId.text() == dep.name
-                }) {
-                    def xmlOptional = xmlDep.optional[0]
-                    if (!xmlOptional) {
-                        xmlOptional = xmlDep.appendNode('optional')
-                    }
-                    xmlOptional.value = 'true'
-                }
-            }
-        }
-
-        repository(url: "file://${localReleaseDest}")
-    }
-}
 
 task zipRelease(type: Zip) {
     from localReleaseDest
